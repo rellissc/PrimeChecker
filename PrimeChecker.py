@@ -98,5 +98,13 @@ def windowCreation():
 	window.mainloop()
 
 #ListToPrint=GetPrimeList()
-windowCreation()
+testJ=PrimeBlueprint('Test Warframe',url="192.168.0.1/here")
+testJ.AddPart(PrimePart('Credits',25000))
+testJ.AddPart(PrimePart('Neruoptics',1))
+testJ.AddPart(PrimePart('Chassis',1))
+testJ.AddPart(PrimePart('System',1))
+testJ.AddPart(PrimePart('Orokin Cell',10))
+
+print(testJ.JSONFormat())
+#windowCreation()
 

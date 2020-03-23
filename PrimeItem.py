@@ -25,6 +25,18 @@ class PrimeBlueprint:
 	def AddPart(self, part):
 		self.listOfParts.append(part)
 
+	def JSONFormat(self):
+		jsonString=   '{"name":"'+self.name    +'",\n'
+		jsonString+=    '"url":"'+self.url     +'",\n'
+		#jsonString+='"vaulted":"'+self.vaulted +'",\n'
+		jsonString+='"listOfParts":['
+		for part in self.listOfParts:
+			jsonString+=part.JSONFormat()+',\n'
+		jsonString+=']'
+		jsonString+='}'
+
+		return jsonString
+
 
 
 class PrimePart:
@@ -40,6 +52,14 @@ class PrimePart:
 
 	def __repr__(self):
 		return str(self)
+
+	def JSONFormat(self):
+		jsonString='{"partName":"'+self.name+'",'
+		jsonString+='"amount:'+str(self.amount)+''
+
+		jsonString+='}'
+
+		return jsonString
 
 
 
