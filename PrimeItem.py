@@ -55,7 +55,7 @@ class PrimePart:
 
 	def JSONFormat(self):
 		jsonString='{"partName":"'+self.name+'",'
-		jsonString+='"amount:'+str(self.amount)+''
+		jsonString+='"amount":'+str(self.amount)+''
 
 		jsonString+='}'
 
