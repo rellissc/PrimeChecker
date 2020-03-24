@@ -3,6 +3,7 @@ import bs4 as BS
 import urllib.request
 #import PrimeItem
 from PrimeItem import PrimeBlueprint, PrimePart
+from GUIManager import PrimeCheckerApp
 from tkinter import *
 from tkinter import ttk
 import json
@@ -12,7 +13,6 @@ def GetPrimeList():
 	source = urllib.request.urlopen('https://warframe.fandom.com/wiki/Prime').read()
 	soup=BS.BeautifulSoup(source,'html.parser')
 	dictOfGalleries={'gallery-0':'Warframe','gallery-1':'Primary','gallery-2':'Secondary','gallery-3':'Melee','gallery-4':'Comanion','gallery-6':'Archwing'}
-	#dictOfGalleries={'gallery-0':'Warframe','gallery-1':'Primary'}
 	dictionaryOfBlueprints={}
 	for key in dictOfGalleries:
 		galleriesBlueprints=[]
@@ -25,9 +25,6 @@ def GetPrimeList():
 				bp=FillBlueprint(bp)
 				galleriesBlueprints.append(bp)
 
-				#print(galleriesBlueprints.pop())
-
-				#print(div.span.get('data-param'))
 		else:
 			for div in divs:
 				u=div.a.get('href')
@@ -35,17 +32,8 @@ def GetPrimeList():
 				bp=FillBlueprint(bp)
 				galleriesBlueprints.append(bp)
 
-				#print(div.a.get('title'))
 		dictionaryOfBlueprints[dictOfGalleries[key]]=galleriesBlueprints
-	#testDiv=soup.find('div', id='gallery-0')
 
-	#gal0divs=testDiv.find_all('div',class_='lightbox-caption')
-	##gal0divs=testDiv.find_all('div',class_='wikia-gallery-item')
-	#for div in gal0divs:
-	#	print(div.span.get('data-param'))
-	#	print(div.span.a.get('href'))
-	#	#print(div.find('div',class_='lightbox-caption'))
-	#print(dictionaryOfBlueprints)
 
 	return dictionaryOfBlueprints
 
@@ -87,7 +75,7 @@ def createJSONFile(listOfGalleries):
 		if not firstGallery:
 			galleryJSON+=','
 		firstGallery=False
-		galleryJSON+='{"'+key+'":['
+		galleryJSON+='{"galleryName":"'+key+'", "primes":['
 		firstPrime=True
 		for prime in listOfGalleries[key]:
 			if firstPrime:
@@ -112,23 +100,37 @@ def readJSONFile(fileName):
 
 
 def windowCreation(dictionaryOfGalleries):
+
 	window=Tk()
 	window.title('Prime List')
-	window.geometry('900x900')
-	TAB_CONTROL=ttk.Notebook(window)
-	TAB1=ttk.Frame(TAB_CONTROL)
-	TAB_CONTROL.add(TAB1,text='Warframes')
+	#window.geometry('900x900')
+	tabControl=ttk.Notebook(window)
+	
+	for gallery in dictionaryOfGalleries:
+		tab=ttk.Frame(tabControl)
+		tabControl.add(tab,text=gallery['galleryName'])
+		col=0
+		row=0
 
-	TAB2=ttk.Frame(TAB_CONTROL)
-	TAB_CONTROL.add(TAB2,text='Primaries')
-	TAB_CONTROL.pack(expand=1, fill='both')
-	ttk.Label(TAB1, text='Warframes go here').grid(column=0,row=0,padx=10,pady=10)
-	ttk.Label(TAB2, text='Primary Weapons go here').grid(column=0,row=0,padx=10,pady=10)
+		for prime in gallery['primes']:
+			ttk.Button(tab, text=prime['name']).grid(column=0,row=row, sticky='ew')
+			row+=1
+	tabControl.pack(expand=1,fill='both')
+	#TAB_CONTROL=ttk.Notebook(window)
+	#TAB1=ttk.Frame(TAB_CONTROL)
+	#TAB_CONTROL.add(TAB1,text='Warframes')
+
+	#TAB2=ttk.Frame(TAB_CONTROL)
+	#TAB_CONTROL.add(TAB2,text='Primaries')
+	#TAB_CONTROL.pack(expand=1, fill='both')
+	#ttk.Label(TAB1, text='Warframes go here').grid(column=0,row=0,padx=10,pady=10)
+	#ttk.Label(TAB2, text='Primary Weapons go here').grid(column=0,row=0,padx=10,pady=10)
 	window.mainloop()
 
 
 #createJSONFile(GetPrimeList())
-print(readJSONFile('galleryJSON.json')['Galleries'])
-
-#windowCreation()
+dict=readJSONFile('galleryJSON.json')['Galleries']
+window=PrimeCheckerApp(dict, title='PrimeCheckerApp')
+window.mainloop()
+#windowCreation(dict)
 
