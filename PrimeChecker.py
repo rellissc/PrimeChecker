@@ -14,8 +14,8 @@ import json
 def GetPrimeList():
 	source = urllib.request.urlopen('https://warframe.fandom.com/wiki/Prime').read()
 	soup=BS.BeautifulSoup(source,'html.parser')
-	#dictOfGalleries={'gallery-0':'Warframe','gallery-1':'Primary','gallery-2':'Secondary','gallery-3':'Melee','gallery-4':'Comanion','gallery-6':'Archwing'}
-	dictOfGalleries={'gallery-0':'Warframe','gallery-1':'Primary'}
+	dictOfGalleries={'gallery-0':'Warframe','gallery-1':'Primary','gallery-2':'Secondary','gallery-3':'Melee','gallery-4':'Comanion','gallery-6':'Archwing'}
+	#dictOfGalleries={'gallery-0':'Warframe','gallery-1':'Primary'}
 	dictionaryOfBlueprints={}
 	for key in dictOfGalleries:
 		galleriesBlueprints=[]
@@ -33,7 +33,10 @@ def GetPrimeList():
 				#print(div.span.get('data-param'))
 		else:
 			for div in divs:
-				galleriesBlueprints.append(PrimeBlueprint(div.a.get('title')))
+				u=div.a.get('href')
+				bp=PrimeBlueprint(div.a.get('title'),url=u)
+				bp=FillBlueprint(bp)
+				galleriesBlueprints.append(bp)
 
 				#print(div.a.get('title'))
 		dictionaryOfBlueprints[dictOfGalleries[key]]=galleriesBlueprints
@@ -82,17 +85,39 @@ def FillBlueprint(blueprint:PrimeBlueprint):
 	#	print('Not creatable in the foundery, source is :'+blueprint.getURL())
 
 def createJSONFile(listOfGalleries):
-	galleryJSON=''
+	galleryJSON='{"Galleries":['
+	firstGallery=True
 	for key in listOfGalleries:
+		if not firstGallery:
+			galleryJSON+=','
+		firstGallery=False
 		galleryJSON+='{"'+key+'":['
+		firstPrime=True
 		for prime in listOfGalleries[key]:
-			galleryJSON+=prime.JSONFormat()+','
-		galleryJSON=galleryJSON[:-1]+']}'
+			if firstPrime:
+				galleryJSON+=prime.JSONFormat()
+				firstPrime=False
+			else:
+				galleryJSON+=','+prime.JSONFormat()
+		galleryJSON=galleryJSON+']}'
+
+	galleryJSON=galleryJSON+']}'
+
+	with open('galleryJSON.json','w+') as myJSON:
+		myJSON.write(galleryJSON)
 	print(galleryJSON)
 
+def readJSONFile(fileName):
+	toReturn={}
+	with open(fileName) as f:
+		toReturn=json.load(f)
+	return toReturn
 
 
-def windowCreation():
+
+
+
+def windowCreation(dictionaryOfGalleries):
 	window=Tk()
 	window.title('Prime List')
 	window.geometry('900x900')
@@ -107,7 +132,8 @@ def windowCreation():
 	ttk.Label(TAB2, text='Primary Weapons go here').grid(column=0,row=0,padx=10,pady=10)
 	window.mainloop()
 
-createJSONFile(GetPrimeList())
+#createJSONFile(GetPrimeList())
+print(readJSONFile('galleryJSON.json')['Galleries'])
 # testJ=PrimeBlueprint('Test Warframe',url="192.168.0.1/here")
 # testJ.AddPart(PrimePart('Credits',25000))
 # testJ.AddPart(PrimePart('Neruoptics',1))

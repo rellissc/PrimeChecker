@@ -30,9 +30,14 @@ class PrimeBlueprint:
 		jsonString+=    '"url":"'+self.url     +'",\n'
 		#jsonString+='"vaulted":"'+self.vaulted +'",\n'
 		jsonString+='"listOfParts":['
+		first=True
 		for part in self.listOfParts:
-			jsonString+=part.JSONFormat()+',\n'
-		jsonString+=']'
+			if first:
+				jsonString+=part.JSONFormat()
+				first=False
+			else:
+				jsonString+=',\n'+part.JSONFormat()
+		jsonString=jsonString+']'
 		jsonString+='}'
 
 		return jsonString
