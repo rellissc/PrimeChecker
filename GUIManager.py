@@ -10,7 +10,7 @@ class PrimeCheckerApp(tk.Tk):
     def __init__(self, dict, title, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         self.title(title)
-        print(dict)
+        #print(dict)
         tabControl = ttk.Notebook(self)
         listOfdictOfFrames=[]
         style = ttk.Style(tabControl)
