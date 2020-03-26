@@ -65,67 +65,47 @@ def FillBlueprint(blueprint: PrimeBlueprint):
 	return blueprint
 		
 
-def createJSONFile(listOfGalleries):
-	galleryJSON = '{"Galleries":['
-	firstGallery = True
+def CreateJSONFile(listOfGalleries):
+	galleryDict={}
 	for key in listOfGalleries:
-		if not firstGallery:
-			galleryJSON += ','
-		firstGallery = False
-		galleryJSON += '{"galleryName":"'+key+'", "primes":['
-		firstPrime = True
+		primeJSON=[]
 		for prime in listOfGalleries[key]:
-			if firstPrime:
-				galleryJSON += prime.JSONFormat()
-				firstPrime = False
-			else:
-				galleryJSON += ','+prime.JSONFormat()
-		galleryJSON = galleryJSON + ' ]}'
+			primeJSON.append(prime.JSONFormatReady())
+		galleryDict[key]=primeJSON
+	with open('galleryJSON.json','w+') as myJSON:
+		json.dump(galleryDict, myJSON)
 
-	galleryJSON = galleryJSON + ']}'
+	#galleryJSON = '{"Galleries":['
+	#firstGallery = True
+	#for key in listOfGalleries:
+	#	if not firstGallery:
+	#		galleryJSON += ','
+	#	firstGallery = False
+	#	galleryJSON += '{"galleryName":"'+key+'", "primes":['
+	#	firstPrime = True
+	#	for prime in listOfGalleries[key]:
+	#		if firstPrime:
+	#			galleryJSON += prime.JSONFormat()
+	#			firstPrime = False
+	#		else:
+	#			galleryJSON += ','+prime.JSONFormat()
+	#	galleryJSON = galleryJSON + ' ]}'
 
-	with open('galleryJSON.json', 'w+') as myJSON:
-		myJSON.write(galleryJSON)
-	print(galleryJSON)
+	#galleryJSON = galleryJSON + ']}'
+
+	#with open('galleryJSON.json', 'w+') as myJSON:
+	#	myJSON.write(galleryJSON)
+	#print(galleryJSON)
 
 
-def readJSONFile(fileName):
+def ReadJSONFile(fileName):
 	with open(fileName) as f:
 		toReturn = json.load(f)
 	return toReturn
 
 
-def windowCreation(dictionaryOfGalleries):
-
-	Window = Tk()
-	Window.title('Prime List')
-	# window.geometry('900x900')
-	tabControl = ttk.Notebook(Window)
-	
-	for gallery in dictionaryOfGalleries:
-		tab = ttk.Frame(tabControl)
-		tabControl.add(tab, text=gallery['galleryName'])
-		col = 0
-		row = 0
-
-		for prime in gallery['primes']:
-			ttk.Button(tab, text=prime['name']).grid(column=0, row=row, sticky='ew')
-			row += 1
-	tabControl.pack(expand=1, fill='both')
-	# TAB_CONTROL=ttk.Notebook(window)
-	# TAB1=ttk.Frame(TAB_CONTROL)
-	# TAB_CONTROL.add(TAB1,text='Warframes')
-
-	# TAB2=ttk.Frame(TAB_CONTROL)
-	# TAB_CONTROL.add(TAB2,text='Primaries')
-	# TAB_CONTROL.pack(expand=1, fill='both')
-	# ttk.Label(TAB1, text='Warframes go here').grid(column=0,row=0,padx = 10,pady = 10)
-	# ttk.Label(TAB2, text='Primary Weapons go here').grid(column=0,row=0,padx=10,pady=10)
-	Window.mainloop()
-
-
-# createJSONFile(GetPrimeList())
-Dict = readJSONFile('galleryJSON.json')['Galleries']
+#CreateJSONFile(GetPrimeList())
+Dict = ReadJSONFile('galleryJSON.json')
 window = PrimeCheckerApp(Dict, title='Warframe Prime Checker')
 window.mainloop()
 # windowCreation(dict)
