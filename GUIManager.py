@@ -12,6 +12,7 @@ class PrimeCheckerApp(tk.Tk):
         print("Refresh")
 
     def __init__(self, Dict, title, *args, **kwargs):
+        
         tk.Tk.__init__(self, *args, **kwargs)
         self.title(title)
         menuBar=tk.Menu(self)
@@ -36,11 +37,14 @@ class PrimeCheckerApp(tk.Tk):
                 row = 0
                 for part in prime['listOfParts']:
                     ttk.Label(f, text=part['name']+':').grid(row=row, column=0, sticky='e')
-                    sb = ttk.Spinbox(f, from_=0, to=part['amount'])
+
+                    sb = ttk.Spinbox(f, from_=0, to=part['amount'], tex)
                     sb.delete(0,"end")
                     sb.insert(0,part['amountOwned'])
                     sb.grid(row=row, column=1)
                     ttk.Label(f, text='/'+str(part['amount'])).grid(row=row, column=2, sticky='w')
+                    scaleWidget=ttk.Scale(f, from_=0, to=part['amount'])
+                    scaleWidget.grid(row=row, column=3)
                     row += 1
                 notebook.add(f, text=prime['name'])
                 #  frame=ttk.Frame(tab)
